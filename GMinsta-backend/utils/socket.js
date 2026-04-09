@@ -45,7 +45,7 @@ const initSocket = (server) => {
 
   ioInstance = new Server(server, {
     cors: {
-      origin: process.env.CLIENT_URL || "*",
+      origin: true,
       credentials: true
     }
   });

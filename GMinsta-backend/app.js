@@ -15,22 +15,6 @@ const { initSocket } = require("./utils/socket");
 dotenv.config();
 
 const app = express();
-const configuredClientUrls = String(process.env.CLIENT_URL || "")
-  .split(",")
-  .map((value) => value.trim())
-  .filter(Boolean);
-
-const isAllowedOrigin = (origin) => {
-  if (!origin) {
-    return true;
-  }
-
-  if (configuredClientUrls.includes(origin)) {
-    return true;
-  }
-
-  return /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(origin);
-};
 
 [
   path.join(__dirname, "uploads"),
@@ -46,11 +30,7 @@ const isAllowedOrigin = (origin) => {
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (isAllowedOrigin(origin)) {
-        return callback(null, true);
-      }
-
-      return callback(new Error("Origin not allowed by CORS."));
+      return callback(null, true);
     },
     credentials: true
   })
