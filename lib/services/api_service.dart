@@ -26,20 +26,14 @@ class ApiException implements Exception {
 }
 
 class AuthResult {
-  const AuthResult({
-    required this.token,
-    required this.user,
-  });
+  const AuthResult({required this.token, required this.user});
 
   final String token;
   final AppUser user;
 }
 
 class UserProfileResponse {
-  const UserProfileResponse({
-    required this.user,
-    required this.relationship,
-  });
+  const UserProfileResponse({required this.user, required this.relationship});
 
   final AppUser user;
   final Map<String, dynamic> relationship;
@@ -47,8 +41,8 @@ class UserProfileResponse {
 
 class ApiService {
   ApiService()
-      : _storage = const FlutterSecureStorage(),
-        _client = http.Client();
+    : _storage = const FlutterSecureStorage(),
+      _client = http.Client();
 
   static const _tokenKey = 'gminsta_jwt';
 
@@ -60,15 +54,13 @@ class ApiService {
   io.Socket? _socket;
 
   String get _configuredBaseUrl {
-    final envBaseUrl = dotenv.env['GMINSTA_API_URL']?.trim() ?? '';
+    final BaseUrl = "https://gm-insta.onrender.com";
 
-    if (envBaseUrl.isNotEmpty) {
-      return envBaseUrl;
+    if (BaseUrl.isNotEmpty) {
+      return BaseUrl;
     }
 
-    throw const ApiException(
-      'GMINSTA_API_URL is not set in the app .env file.',
-    );
+    throw const ApiException('url Not valid. Please set the BASE_URL');
   }
 
   String get baseUrl => _configuredBaseUrl.endsWith('/api')
@@ -113,10 +105,7 @@ class ApiService {
     final payload = await _request(
       method: 'POST',
       path: '/auth/login',
-      body: {
-        'identifier': identifier,
-        'password': password,
-      },
+      body: {'identifier': identifier, 'password': password},
     );
 
     return _handleAuthResult(payload);
@@ -218,9 +207,7 @@ class ApiService {
       path: '/posts',
       fieldName: 'media',
       file: file,
-      extraFields: {
-        'caption': caption,
-      },
+      extraFields: {'caption': caption},
     );
 
     return _mapPost(payload['post'] as Map<String, dynamic>);
@@ -307,12 +294,7 @@ class ApiService {
             user: _mapUser(json['user'] as Map<String, dynamic>),
             stories: (json['stories'] as List<dynamic>? ?? [])
                 .whereType<Map<String, dynamic>>()
-                .map(
-                  (story) => _mapStory({
-                    ...story,
-                    'user': json['user'],
-                  }),
-                )
+                .map((story) => _mapStory({...story, 'user': json['user']}))
                 .toList(),
           ),
         )
@@ -416,9 +398,7 @@ class ApiService {
 
     _socket!.on('message:new', (data) {
       if (data is Map) {
-        _messagesController.add(
-          _mapMessage(Map<String, dynamic>.from(data)),
-        );
+        _messagesController.add(_mapMessage(Map<String, dynamic>.from(data)));
       }
     });
   }
@@ -439,8 +419,8 @@ class ApiService {
     final relativePath = uploadsIndex >= 0
         ? normalizedValue.substring(uploadsIndex)
         : (normalizedValue.startsWith('uploads/')
-            ? '/$normalizedValue'
-            : normalizedValue);
+              ? '/$normalizedValue'
+              : normalizedValue);
 
     return '${socketBaseUrl}${relativePath.startsWith('/') ? '' : '/'}$relativePath';
   }
@@ -452,9 +432,7 @@ class ApiService {
     Map<String, dynamic>? body,
   }) async {
     final uri = Uri.parse('$baseUrl$path');
-    final headers = <String, String>{
-      'Content-Type': 'application/json',
-    };
+    final headers = <String, String>{'Content-Type': 'application/json'};
 
     if (requiresAuth) {
       final token = await getSavedToken();
@@ -478,8 +456,11 @@ class ApiService {
         response = await _client.put(uri, headers: headers, body: encodedBody);
         break;
       case 'DELETE':
-        response =
-            await _client.delete(uri, headers: headers, body: encodedBody);
+        response = await _client.delete(
+          uri,
+          headers: headers,
+          body: encodedBody,
+        );
         break;
       default:
         throw ApiException('Unsupported method: $method');
@@ -544,9 +525,7 @@ class ApiService {
 
   AppUser _mapUser(Map<String, dynamic> json) {
     final user = AppUser.fromJson(json);
-    return user.copyWith(
-      profilePic: resolveMediaUrl(user.profilePic),
-    );
+    return user.copyWith(profilePic: resolveMediaUrl(user.profilePic));
   }
 
   PostModel _mapPost(Map<String, dynamic> json) {
