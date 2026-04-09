@@ -73,17 +73,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'GMinsta',
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineMedium
-                                ?.copyWith(fontWeight: FontWeight.w800),
+                          Center(
+                            child: Image.asset(
+                              'assets/branding/image.png',
+                              height: 88,
+                              fit: BoxFit.contain,
+                            ),
                           ),
                           const SizedBox(height: 8),
-                          Text(
-                            'Sign in to your social world.',
-                            style: Theme.of(context).textTheme.bodyLarge,
+                          Center(
+                            child: Text(
+                              'Sign in to your social world.',
+                              style: Theme.of(context).textTheme.bodyLarge,
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                           const SizedBox(height: 28),
                           TextFormField(

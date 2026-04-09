@@ -44,6 +44,7 @@ class ApiService {
       _client = http.Client();
 
   static const _tokenKey = 'gminsta_jwt';
+  static const baseUrl = 'https://gm-insta.onrender.com/api';
 
   final FlutterSecureStorage _storage;
   final http.Client _client;
@@ -51,20 +52,6 @@ class ApiService {
       StreamController<MessageModel>.broadcast();
 
   io.Socket? _socket;
-
-  String get _configuredBaseUrl {
-    final BaseUrl = "https://gm-insta.onrender.com";
-
-    if (BaseUrl.isNotEmpty) {
-      return BaseUrl;
-    }
-
-    throw const ApiException('url Not valid. Please set the BASE_URL');
-  }
-
-  String get baseUrl => _configuredBaseUrl.endsWith('/api')
-      ? _configuredBaseUrl
-      : '${_configuredBaseUrl}/api';
 
   String get socketBaseUrl => baseUrl.replaceFirst(RegExp(r'/api$'), '');
 
